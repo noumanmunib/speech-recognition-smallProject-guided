@@ -29,6 +29,12 @@ const setCustomVoice = function () {
 const toggleSpeech = function (startOver = true) {
   speechSynthesis.cancel(); // this cancels the speech recognition upon a different selection of voice.
   if (startOver) speechSynthesis.speak(msg);
+
+  // set buttons upon end of the speech
+  msg.onend = function () {
+    stopButton.disabled = true; // Disable stopButton after speech ends
+    speakButton.disabled = false; // Enable speakButton after speech ends
+  };
 };
 
 const setFeatures = function (e) {
@@ -39,7 +45,16 @@ const setFeatures = function (e) {
 speechSynthesis.addEventListener("voiceschanged", populateVoices);
 voicesDropdown.addEventListener("change", setCustomVoice);
 options.forEach((option) => option.addEventListener("change", setFeatures));
-speakButton.addEventListener("click", toggleSpeech);
-stopButton.addEventListener("click", () => toggleSpeech(false));
+speakButton.addEventListener("click", () => {
+  toggleSpeech(true);
+  speakButton.disabled = true;
+  stopButton.disabled = false;
+});
+stopButton.addEventListener("click", () => {
+  toggleSpeech(false);
+  stopButton.disabled = true;
+  speakButton.disabled = false;
+});
+
 // OR
 // stopButton.addEventListener("click", toggleSpeech.bind(null, false)); // Using bind method to toggle speech.
